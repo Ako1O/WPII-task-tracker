@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Tracker</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Task Tracker</h1>
+
+      <!-- Add Task Form -->
+      <section class="add-section">
+        <h2>Add New Task</h2>
+        <form id="add-form">
+          <input
+            type="text"
+            id="task-title"
+            placeholder="Enter task title..."
+            maxlength="200"
+          />
+          <button type="submit">Add Task</button>
+        </form>
+        <p id="form-error" class="error-msg"></p>
+      </section>
+
+      <!-- Task List -->
+      <section class="list-section">
+        <h2>Tasks</h2>
+        <p id="empty-msg" class="empty-msg">No tasks yet. Add one above!</p>
+        <ul id="task-list"></ul>
+      </section>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal">
+        <h3>Edit Task</h3>
+        <input type="text" id="edit-title" maxlength="200" />
+        <p id="edit-error" class="error-msg"></p>
+        <div class="modal-buttons">
+          <button id="save-btn">Save</button>
+          <button id="cancel-btn" class="secondary">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
