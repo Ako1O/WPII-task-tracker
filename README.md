@@ -50,9 +50,9 @@ You can add tasks, mark them as done, edit them or delete them. Tasks are saved 
 You will need **Node.js** installed on your computer. You can download it from (nodejs.org). 
 
 **Step 1 — clone the repository**
-make sure you change "your-username" to yours.
+make sure you write my username with O instead of 0
 ```
-git clone https://github.com/your-username/WPII-task-tracker.git
+git clone https://github.com/ako1O/WPII-task-tracker.git
 cd WPII-task-tracker
 ```
 
