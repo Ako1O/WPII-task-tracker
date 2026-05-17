@@ -13,10 +13,10 @@ const editError = document.getElementById("edit-error");
 const saveBtn = document.getElementById("save-btn");
 const cancelBtn = document.getElementById("cancel-btn");
 
-// Track which task is being edited
+// Track currently editing task ID for the edit modal
 let editingTaskId = null;
 
-// ── API helpers ──────────────────────────────────────────────────────────────
+// API functions
 
 async function fetchTasks() {
   const res = await fetch(API);
@@ -58,7 +58,7 @@ async function deleteTask(id) {
   }
 }
 
-// ── Render ───────────────────────────────────────────────────────────────────
+// Render tasks in the UI
 
 function renderTasks(tasks) {
   taskList.innerHTML = "";
@@ -114,14 +114,14 @@ function renderTasks(tasks) {
   });
 }
 
-// Prevent XSS when inserting user-supplied text into the DOM
+// Prevent XSS by escaping HTML in task titles
 function escapeHtml(str) {
   const div = document.createElement("div");
   div.appendChild(document.createTextNode(str));
   return div.innerHTML;
 }
 
-// ── Load ─────────────────────────────────────────────────────────────────────
+// Load tasks on page load
 
 async function loadTasks() {
   try {
@@ -133,7 +133,7 @@ async function loadTasks() {
   }
 }
 
-// ── Add form ─────────────────────────────────────────────────────────────────
+// Add task logic
 
 addForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -156,7 +156,7 @@ addForm.addEventListener("submit", async (e) => {
   }
 });
 
-// ── Edit modal ───────────────────────────────────────────────────────────────
+// Edit modal logic
 
 function openEditModal(id, currentTitle) {
   editingTaskId = id;
@@ -175,7 +175,7 @@ saveBtn.addEventListener("click", async () => {
   editError.textContent = "";
   const newTitle = editTitleInput.value.trim();
 
-  // Client-side validation
+  // client-side validation
   if (!newTitle) {
     editError.textContent = "Title cannot be empty.";
     return;
@@ -192,11 +192,9 @@ saveBtn.addEventListener("click", async () => {
 
 cancelBtn.addEventListener("click", closeEditModal);
 
-// Close modal if clicking outside
+// close modal if clicking outside
 modalOverlay.addEventListener("click", (e) => {
   if (e.target === modalOverlay) closeEditModal();
 });
-
-// ── Init ─────────────────────────────────────────────────────────────────────
 
 loadTasks();

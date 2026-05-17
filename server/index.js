@@ -7,7 +7,7 @@ import { errorHandler } from "../middleware/errorHandler.js";
 const app = express();
 const PORT = 3000;
 
-// __dirname equivalent for ES modules
+// Get __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname, "../public")));
 // Routes
 app.use("/api/tasks", taskRoutes);
 
-// Error handler (must be last)
+// Error handling middleware (should be last)
 app.use(errorHandler);
 
 app.listen(PORT, () => {
