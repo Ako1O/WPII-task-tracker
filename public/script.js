@@ -13,7 +13,7 @@ const editError = document.getElementById("edit-error");
 const saveBtn = document.getElementById("save-btn");
 const cancelBtn = document.getElementById("cancel-btn");
 
-// Track currently editing task ID for the edit modal
+// Track which task is being edited
 let editingTaskId = null;
 
 // API functions
@@ -32,7 +32,7 @@ async function createTask(title) {
   });
   if (!res.ok) {
     const data = await res.json();
-    throw new Error(data.error || "Failed to create task");
+    throw new Error(data.error || "Failed to Create task");
   }
   return res.json();
 }
@@ -45,7 +45,7 @@ async function updateTask(id, updates) {
   });
   if (!res.ok) {
     const data = await res.json();
-    throw new Error(data.error || "Failed to update task");
+    throw new Error(data.error || "Failed to Update task");
   }
   return res.json();
 }
@@ -54,11 +54,25 @@ async function deleteTask(id) {
   const res = await fetch(`${API}/${id}`, { method: "DELETE" });
   if (!res.ok) {
     const data = await res.json();
-    throw new Error(data.error || "Failed to delete task");
+    throw new Error(data.error || "Failed to Delete task");
   }
 }
 
-// Render tasks in the UI
+// Toast notification system
+
+const toast = document.getElementById("toast");
+let toastTimer = null;
+
+function showToast(message, type = "success") {
+  toast.textContent = message;
+  toast.className = `toast-msg ${type}`;
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.className = "toast-msg hidden";
+  }, 3000);
+}
+
+// Render tasks in the DOM
 
 function renderTasks(tasks) {
   taskList.innerHTML = "";
@@ -72,41 +86,37 @@ function renderTasks(tasks) {
 
   tasks.forEach((task) => {
     const li = document.createElement("li");
-    li.className = "task-item";
+    li.className = "list-group-item d-flex align-items-center gap-2";
     li.dataset.id = task.id;
 
     li.innerHTML = `
-      <input type="checkbox" ${task.completed ? "checked" : ""} title="Mark complete" />
-      <span class="task-title ${task.completed ? "completed" : ""}">${escapeHtml(task.title)}</span>
-      <div class="task-actions">
-        <button class="edit-btn">Edit</button>
-        <button class="danger delete-btn">Delete</button>
-      </div>
+      <input type="checkbox" class="form-check-input" ${task.completed ? "checked" : ""} />
+      <span class="task-title flex-grow-1 ${task.completed ? "completed" : ""}">${escapeHtml(task.title)}</span>
+      <button class="btn btn-sm btn-outline-secondary edit-btn">Edit</button>
+      <button class="btn btn-sm btn-outline-danger delete-btn">Delete</button>
     `;
 
-    // Checkbox toggle
     li.querySelector("input[type='checkbox']").addEventListener("change", async (e) => {
       try {
         await updateTask(task.id, { completed: e.target.checked });
         await loadTasks();
       } catch (err) {
-        alert(err.message);
+        showToast(err.message, "error");
       }
     });
 
-    // Edit button
     li.querySelector(".edit-btn").addEventListener("click", () => {
       openEditModal(task.id, task.title);
     });
 
-    // Delete button
     li.querySelector(".delete-btn").addEventListener("click", async () => {
       if (!confirm("Delete this task?")) return;
       try {
         await deleteTask(task.id);
+        showToast("Task deleted.");
         await loadTasks();
       } catch (err) {
-        alert(err.message);
+        showToast(err.message, "error");
       }
     });
 
@@ -114,14 +124,14 @@ function renderTasks(tasks) {
   });
 }
 
-// Prevent XSS by escaping HTML in task titles
+// Prevent XSS when inserting user-supplied text into the DOM
 function escapeHtml(str) {
   const div = document.createElement("div");
   div.appendChild(document.createTextNode(str));
   return div.innerHTML;
 }
 
-// Load tasks on page load
+// Load and render tasks on page load
 
 async function loadTasks() {
   try {
@@ -133,7 +143,7 @@ async function loadTasks() {
   }
 }
 
-// Add task logic
+// add task form
 
 addForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -150,13 +160,14 @@ addForm.addEventListener("submit", async (e) => {
   try {
     await createTask(title);
     taskTitleInput.value = "";
+    showToast("Task added successfully!");
     await loadTasks();
   } catch (err) {
     formError.textContent = err.message;
   }
 });
 
-// Edit modal logic
+// edit modal functions
 
 function openEditModal(id, currentTitle) {
   editingTaskId = id;
@@ -175,7 +186,7 @@ saveBtn.addEventListener("click", async () => {
   editError.textContent = "";
   const newTitle = editTitleInput.value.trim();
 
-  // client-side validation
+  // Client-side validation
   if (!newTitle) {
     editError.textContent = "Title cannot be empty.";
     return;
@@ -184,6 +195,7 @@ saveBtn.addEventListener("click", async () => {
   try {
     await updateTask(editingTaskId, { title: newTitle });
     closeEditModal();
+    showToast("Task updated.");
     await loadTasks();
   } catch (err) {
     editError.textContent = err.message;
@@ -192,9 +204,11 @@ saveBtn.addEventListener("click", async () => {
 
 cancelBtn.addEventListener("click", closeEditModal);
 
-// close modal if clicking outside
+// Close modal if clicking outside
 modalOverlay.addEventListener("click", (e) => {
   if (e.target === modalOverlay) closeEditModal();
 });
+
+// Init
 
 loadTasks();
