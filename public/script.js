@@ -16,6 +16,9 @@ const cancelBtn = document.getElementById("cancel-btn");
 // Track which task is being edited
 let editingTaskId = null;
 
+// Track active filter (all / active / completed)
+let currentFilter = "all";
+
 // API functions
 
 async function fetchTasks() {
@@ -77,14 +80,21 @@ function showToast(message, type = "success") {
 function renderTasks(tasks) {
   taskList.innerHTML = "";
 
-  if (tasks.length === 0) {
+  // apply the active filter before rendering
+  const filtered = tasks.filter((task) => {
+    if (currentFilter === "active") return !task.completed;
+    if (currentFilter === "completed") return task.completed;
+    return true;
+  });
+
+  if (filtered.length === 0) {
     emptyMsg.style.display = "block";
     return;
   }
 
   emptyMsg.style.display = "none";
 
-  tasks.forEach((task) => {
+  filtered.forEach((task) => {
     const li = document.createElement("li");
     li.className = "list-group-item d-flex align-items-center gap-2";
     li.dataset.id = task.id;
@@ -142,6 +152,23 @@ async function loadTasks() {
     taskList.innerHTML = "<li>Error loading tasks.</li>";
   }
 }
+
+// filter button clicks
+
+document.getElementById("filter-buttons").addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-filter]");
+  if (!btn) return;
+
+  currentFilter = btn.dataset.filter;
+
+  // update active button style
+  document.querySelectorAll("#filter-buttons button").forEach((b) => {
+    b.className = "btn btn-sm btn-outline-dark";
+  });
+  btn.className = "btn btn-sm btn-dark active";
+
+  loadTasks();
+});
 
 // add task form
 
