@@ -6,6 +6,7 @@ const taskTitleInput = document.getElementById("task-title");
 const formError = document.getElementById("form-error");
 const taskList = document.getElementById("task-list");
 const emptyMsg = document.getElementById("empty-msg");
+const taskCounter = document.getElementById("task-counter");
 
 const modalOverlay = document.getElementById("modal-overlay");
 const editTitleInput = document.getElementById("edit-title");
@@ -75,10 +76,19 @@ function showToast(message, type = "success") {
   }, 3000);
 }
 
+// Update the task counter text
+function updateCounter(tasks) {
+  const remaining = tasks.filter((t) => !t.completed).length;
+  taskCounter.textContent = remaining === 1 ? "1 task remaining" : `${remaining} tasks remaining`;
+}
+
 // Render tasks in the DOM
 
 function renderTasks(tasks) {
   taskList.innerHTML = "";
+
+  // update counter based on all tasks, not the filtered view
+  updateCounter(tasks);
 
   // apply the active filter before rendering
   const filtered = tasks.filter((task) => {
