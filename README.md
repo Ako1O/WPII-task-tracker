@@ -41,7 +41,7 @@ You can add tasks, mark them as done, edit them or delete them. Tasks are saved 
 - taskService.js - reads and writes tasks.json
 - tasks.json - all tasks are stored there
 
-<img width="1360" height="1040" alt="task_tracker_structure" src="https://github.com/user-attachments/assets/c065d0df-a3dc-4e1c-96a3-cdbab39739d2" />
+<img width="750" height="716" alt="image" src="https://github.com/user-attachments/assets/948fd20b-aeb9-49eb-a7f0-0e0f83b942ea" />
 
 ---
 
