@@ -45,6 +45,14 @@
       <div class="card shadow-sm">
         <div class="card-body">
           <h5 class="card-title mb-3">Your Current Tasks</h5>
+
+          <!-- filter buttons - All / Active / Completed -->
+          <div class="btn-group mb-3" id="filter-buttons">
+            <button class="btn btn-sm btn-dark active" data-filter="all">All</button>
+            <button class="btn btn-sm btn-outline-dark" data-filter="active">Active</button>
+            <button class="btn btn-sm btn-outline-dark" data-filter="completed">Completed</button>
+          </div>
+
           <p id="empty-msg" class="text-muted fst-italic">No tasks yet.</p>
           <ul id="task-list" class="list-group list-group-flush"></ul>
         </div>
